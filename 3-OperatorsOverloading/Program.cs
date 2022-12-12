@@ -29,7 +29,6 @@ namespace OperatorsOverloading
 
             List<int> lst2 = lst;
             lst2 += List.From(4, 3);
-
             if (lst2.Tail.Tail != lst1)
             {
                 throw new Exception("Wrong implementation");

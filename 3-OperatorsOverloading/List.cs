@@ -36,20 +36,14 @@ namespace OperatorsOverloading
         /// </summary>
         /// <param name="enumerable">the array of elements to put on the list.</param>
         /// <returns>a new list with the given elements.</returns>
-        public static implicit operator List<TValue>(TValue[] enumerable)
-        {
-            throw new NotImplementedException();
-        }
+        public static implicit operator List<TValue>(TValue[] enumerable) => List.From(enumerable.AsEnumerable());
 
         /// <summary>
         /// Converts the given element into a new list implicitly.
         /// </summary>
         /// <param name="element">the element to put on the list.</param>
         /// <returns>a new list with only the given element.</returns>
-        public static implicit operator List<TValue>(TValue element)
-        {
-            throw new NotImplementedException();
-        }
+        public static implicit operator List<TValue>(TValue element) => List.Of(element);
 
         /// <summary>
         /// Converts the given list into a new array explicitly.
@@ -58,7 +52,12 @@ namespace OperatorsOverloading
         /// <returns>an array containing the elements of the list.</returns>
         public static explicit operator TValue[](List<TValue> list)
         {
-            throw new NotImplementedException();
+            var ar = new TValue[list.Length];
+            int i = 0;
+            foreach(List<TValue> e in list.Flatten())
+                ar[i++] = e.Head;
+            
+            return ar;
         }
 
         /// <summary>
@@ -72,7 +71,15 @@ namespace OperatorsOverloading
         /// </returns>
         public static bool operator ==(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            var ar1 = (TValue[])list1;
+            var ar2 = (TValue[])list2;
+
+            if(ar1.Length != ar2.Length) return false;
+
+            for(int i = 0; i < ar1.Length; i++)
+                if(!ar1[i].Equals(ar2[i])) return false;
+            
+            return true;
         }
 
         /// <summary>
@@ -83,10 +90,7 @@ namespace OperatorsOverloading
         /// <returns>
         /// <see langword="true"/> if the two source lists are not equal; otherwise, <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(List<TValue> list1, List<TValue> list2)
-        {
-            throw new NotImplementedException();
-        }
+        public static bool operator !=(List<TValue> list1, List<TValue> list2) => !(list1 == list2);
 
         /// <summary>
         /// Determines whether the <see cref="Length"/> of the <paramref name="list1"/> is greater or equal
@@ -98,10 +102,7 @@ namespace OperatorsOverloading
         /// <see langword="true"/> if the first list is longer or equal to the second,
         /// <see langword="false"/> otherwise.
         /// </returns>
-        public static bool operator >=(List<TValue> list1, List<TValue> list2)
-        {
-            throw new NotImplementedException();
-        }
+        public static bool operator >=(List<TValue> list1, List<TValue> list2) => list1.Length >= list2.Length;
 
         /// <summary>
         /// Determines whether the <see cref="Length"/> of the <paramref name="list1"/> is lower or equal
@@ -113,10 +114,7 @@ namespace OperatorsOverloading
         /// <see langword="true"/> if the first list is shorter or equal to the second,
         /// <see langword="false"/> otherwise.
         /// </returns>
-        public static bool operator <=(List<TValue> list1, List<TValue> list2)
-        {
-            throw new NotImplementedException();
-        }
+        public static bool operator <=(List<TValue> list1, List<TValue> list2) => list1.Length <= list2.Length;
 
         /// <summary>
         /// Determines whether the <paramref name="list1"/> is shorter than the <paramref name="list2"/>.
@@ -126,10 +124,7 @@ namespace OperatorsOverloading
         /// <returns>
         /// <see langword="true"/> if the first list is shorter than the second, <see langword="false"/> otherwise.
         /// </returns>
-        public static bool operator <(List<TValue> list1, List<TValue> list2)
-        {
-            throw new NotImplementedException();
-        }
+        public static bool operator <(List<TValue> list1, List<TValue> list2) => list1.Length < list2.Length;
 
         /// <summary>
         /// Determines whether the <paramref name="list1"/> is longer than the <paramref name="list2"/>.
@@ -139,10 +134,7 @@ namespace OperatorsOverloading
         /// <returns>
         /// <see langword="true"/> if the first list is longer than the second, <see langword="false"/> otherwise.
         /// </returns>
-        public static bool operator >(List<TValue> list1, List<TValue> list2)
-        {
-            throw new NotImplementedException();
-        }
+        public static bool operator >(List<TValue> list1, List<TValue> list2) => list1.Length > list2.Length;
 
         /// <summary>
         /// Chains the two lists together by appending <paramref name="list2"/> to <paramref name="list1"/>.
@@ -152,7 +144,11 @@ namespace OperatorsOverloading
         /// <returns>the result list.</returns>
         public static List<TValue> operator +(List<TValue> list1, List<TValue> list2)
         {
-            throw new NotImplementedException();
+            var ar = new TValue[list1.Length + list2.Length];
+            int i = 0;
+            foreach(List<TValue> e in list1.Flatten().Concat(list2.Flatten()))
+                ar[i++] = e.Head;
+            return ar;
         }
 
         /// <summary>
@@ -162,10 +158,7 @@ namespace OperatorsOverloading
         /// <param name="list1">the first list.</param>
         /// <param name="list2">the second list.</param>
         /// <returns>the result list.</returns>
-        public static List<TValue> operator -(List<TValue> list1, List<TValue> list2)
-        {
-            throw new NotImplementedException();
-        }
+        public static List<TValue> operator -(List<TValue> list1, List<TValue> list2) => List.From(((TValue[])list1).Where(x=>!((TValue[])list2).Contains(x)));
 
         /// <summary>
         /// Converts this list into a list of lists, which are each one the tail of the previous one.
